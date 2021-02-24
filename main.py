@@ -12,8 +12,9 @@ U0=float(input("Введите напряжение холостого хода:
 r=float(input("Введите значение r: "))
 lab_data = {'Resistance': [r], 'Voltage': [U0], 'Current': [0], 'Power': [0], 'Efficiency': [100], 'Source_res': "-"}
 lab_dataframe=pd.DataFrame(lab_data)
-print(lab_dataframe)
-print("\nТок короткого замыкания Isc = ",  "%.3f" % (U0*1000/r), " мА\n")
+#print(lab_dataframe)
+Isc = round((U0*1000/r),3)
+print("\nТок короткого замыкания Isc = ",  Isc, " мА\n")
 mode = bool(int(input("Ручной ввод или через csv? (1/0)")))
 if (mode==0) :
     csv_file = open('R_U.csv','r')
@@ -57,10 +58,34 @@ for k in range(1,9):
 r_delta= math.sqrt(r_delta/8)
 print("Погрешность расчёта внутреннего сопротивления: ", "%.3f" % (r_delta), " Ом")
 #Графики
-axis = plt.gca()
 
-lab_dataframe.plot(kind="line", x='Current',y ='Power', ax = axis)
-lab_dataframe.plot(kind="line", x='Current',y ='Efficiency', ax = axis)
+#P(I),
+lab_dataframe.plot(kind="line", x='Current',y ='Power')
+axis1 = plt.gca()
+axis1.set_xlabel('I, мА')
+axis1.set_ylabel('P, Вт')
+axis1.legend (["P(I)"])
+plt.show()
+
+#n(I)
+lab_dataframe.plot(kind="line", x='Current',y ='Efficiency')
+axis2 = plt.gca()
+axis2.set_xlabel('I, мА')
+axis2.set_ylabel('%')
+axis2.legend(["КПД"])
+plt.show()
+#plt.clf()
+#P(I), n(I)
+
+#lab_dataframe.plot(kind="line", x='Current',y ='Power', ax = axis2)
+#lab_dataframe.plot(kind="line", x='Current',y ='Efficiency', ax = axis2)
+
+plt.plot([Isc, 0],[0, U0], linestyle = '--')
+#plt.plot(lab_dataframe['Current'],lab_dataframe['Voltage'])
+axis3 = plt.gca()
+axis3.scatter(lab_dataframe['Current'],lab_dataframe['Voltage'])
+axis3.set_xlabel('I, мА')
+axis3.set_ylabel('U, В')
 plt.show()
 
 end=input("Это всё?")
